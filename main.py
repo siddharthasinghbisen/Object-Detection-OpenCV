@@ -9,7 +9,7 @@ import time
 
 class ObjectDetection:
 
-    def __init__(self, lower=np.array([100, 0, 0]), upper=np.array([120, 255, 100]), x=0, y=0, dimx=640, dimy=400, RED=np.array([0, 0, 255])):
+    def __init__(self, lower=np.array([100, 0, 0]), upper=np.array([120, 255, 100]), x=0, y=0, dimx=640, dimy=400, RED=(0, 0, 255)):
         self.lower = lower
         self.upper = upper
         self.x = x
@@ -30,13 +30,6 @@ class ObjectDetection:
 
     def findobje(self, activelist):
 
-        ave = averageofactive(activelist)
-        self.x = ave[0]
-        self.y = ave[1]
-        obj = [self.x, self.y]
-        return obj
-
-    def averageofactive(activelist):
         totalx = 0
         totaly = 0
         count = 0
@@ -46,15 +39,15 @@ class ObjectDetection:
             totaly = totaly + item[1]
             count = count + 1
 
-        if count > 0:
-            return [int(totalx / count), int(totaly / count)]
-        else:
-            return [0, 0]
+        self.x = int(totalx / count)
+        self.y = int(totaly / count)
+        obj = [self.x, self.y]
+        return obj
 
-    def draw(self, obj, frame):
+    def draw(self, objectloc, frame):
 
-        if obj[0] != 0 or obj[1] != 0:
-            cv2.circle(frame, (obj[0], obj[1]), 10, self.RED, 2)
+        if objectloc[0] != 0 or objectloc[1] != 0:
+            cv2.circle(frame, (objectloc[0], objectloc[1]), 10, self.RED, 2)
 
 
 ''' main loop starts here '''
@@ -69,9 +62,11 @@ while(True):
     frame = cv2.resize(Frame, (dimx, dimy))
     blurred = cv2.GaussianBlur(Frame, (11, 11), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-    mask, Point = p.gatherPoint(hsv)
+    mask, Points = p.gatherPoint(hsv)
+    objectloc = p.findobje(Points)
 
-    cv2.imshow('frame', mask)
+    p.draw(objectloc, frame)
+    cv2.imshow('frame', frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
