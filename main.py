@@ -4,10 +4,12 @@ import numpy as np
 import argparse
 import cv2
 import imutils
+import pandas as pd
 import time
 import matplotlib.pyplot as plt
+
 from itertools import count
-from matplotlib.animation import FuncAnimation
+import matplotlib.animation as animation
 class ObjectDetection:
 
     def __init__(self, lower=np.array([100, 0, 0]), upper=np.array([120, 255, 100]), x=0, y=0, dimx=640, dimy=400, RED=(0, 0, 255)):
@@ -45,40 +47,46 @@ class ObjectDetection:
         obj = [self.x, self.y]
         return obj, self.x, self.y
 
-    def draw(self, objectloc, frame):
+    def drawcircle(self, objectloc, frame):
 
         if objectloc[0] != 0 or objectloc[1] != 0:
             cv2.circle(frame, (objectloc[0], objectloc[1]), 10, self.RED, 2)
 
     def drawGraph(self, x, y):
-
         plt.cla()
+        plt.plot(x, y, label='x and y coordinates for obj')
 
-        plt.plot(x, y)
+        plt.legend(loc='upper left')
         plt.tight_layout()
 
 
-''' main loop starts here '''
-dimx = 640
+if __name__ == '__main__':
 
-dimy = 400
-video = cv2.VideoCapture(0)
-p = ObjectDetection()
-while(True):
-    ret, Frame = video.read()
+    ''' main loop starts here '''
+    dimx = 640
+    dimy = 400
+    video = cv2.VideoCapture(0)
+    p = ObjectDetection()
+    x, y = [], []
+    while(True):
+        ret, Frame = video.read()
 
-    frame = cv2.resize(Frame, (dimx, dimy))
-    blurred = cv2.GaussianBlur(Frame, (11, 11), 0)
-    hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-    mask, Points = p.gatherPoint(hsv)
-    objectloc, pointx, pointy = p.findobje(Points)
-    ani = FuncAnimation(plt.gcf(), p.drawGraph(pointx, pointy), 1000)
-    p.draw(objectloc, frame)
-    cv2.imshow('frame', frame)
+        frame = cv2.resize(Frame, (dimx, dimy))
+        blurred = cv2.GaussianBlur(Frame, (11, 11), 0)
+        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+        mask, Points = p.gatherPoint(hsv)
+        objectloc, pointx, pointy = p.findobje(Points)
+        p.drawcircle(objectloc, frame)
+        cv2.imshow('frame', frame)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-    plt.tight_layout()
+        x.append(pointx)
+        y.append(pointy)
+
+        ani = animation.FuncAnimation(plt.gcf(), p.drawGraph(x, y), interval=1000)
+        plt.tight_layout()
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
     plt.show()
-video.release()
-cv2.destroyAllWindows()
+    video.release()
+    cv2.destroyAllWindows()
