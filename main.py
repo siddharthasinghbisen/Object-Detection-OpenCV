@@ -68,13 +68,13 @@ class ObjectDetection:
     # def drawGraph(self, x, y):
         # pass
     # To convert the Matplotlib figure to a PIL Image and return it
-    def fig2img(self, fig):
+    '''def fig2img(self, fig):
 
         buf = io.BytesIO()
         fig.savefig(buf)
         buf.seek(0)
         img = Image.open(buf)
-        return img
+        return img '''
 
 
 if __name__ == '__main__':
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     dimy = 400
     video = cv2.VideoCapture(0)
     p = ObjectDetection()
-    x, y = [], []
+    #x, y = [], []
     while(True):
         ret, Frame = video.read()
 
@@ -98,18 +98,27 @@ if __name__ == '__main__':
         # drawcircle
         p.drawcircle(objectloc, frame)
         # To plot x,y in graph for every frame
-        x.append(pointx)
-        y.append(pointy)
-        plt.scatter(x, y, label='x and y coordinates for obj')
+        # x.append(pointx)
+        # y.append(pointy)
+        #plt.scatter(x, y, label='x and y coordinates for obj')
         # gcf is to get the current figure
-        fig = plt.gcf()
+        #fig = plt.gcf()
         # The figure is converted to img
-        img = p.fig2img(fig)
+        #img = p.fig2img(fig)
         # img is converted into array for cv2 to load
-        img2 = np.array(img)
+        #img2 = np.array(img)
         # To display the video detecting the object and also plot x,y respectively
-        cv2.imshow('frame', frame)
-        cv2.imshow('Plots', img2)
+        GRID_SIZE = 20
+
+        height, width, channels = frame.shape
+        for x in range(0, width - 1, GRID_SIZE):
+            cv2.line(frame, (x, 0), (x, height), (255, 0, 0), 1, 1)
+        for x in range(0, height - 1, GRID_SIZE):
+            cv2.line(frame, (0, x), (width, x), (255, 0, 255), 1, 1)
+
+        print(frame.shape)
+        cv2.imshow('object', mask)
+        cv2.imshow('detection', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
