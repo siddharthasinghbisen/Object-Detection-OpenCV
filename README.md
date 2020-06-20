@@ -1,4 +1,4 @@
-# Object-distance-estimation-by-detection
+# Object-detection-OpenCV
 To detect an on object and to plot the x and y (on the point at which cv2 circle is drawn).
 Working of project is shown in the gif below:
 
