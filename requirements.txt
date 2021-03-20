@@ -18,7 +18,7 @@ html5lib==0.9999999
 idna==2.9
 imutils==0.5.3
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 joblib==0.14.1
 Keras==2.3.1
 Keras-Applications==1.0.8
