@@ -14,7 +14,7 @@ google-auth-oauthlib==0.4.1
 google-pasta==0.2.0
 grpcio==1.27.2
 h5py==2.10.0
-html5lib==0.9999999
+html5lib==0.99999999
 idna==2.9
 imutils==0.5.3
 itsdangerous==1.1.0
